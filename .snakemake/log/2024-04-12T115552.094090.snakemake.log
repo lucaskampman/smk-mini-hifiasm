@@ -1,0 +1,27 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                 count
+----------------  -------
+all                     1
+convert_to_fasta        1
+extract_bam             1
+total                   3
+
+Select jobs to execute...
+
+[Fri Apr 12 11:55:53 2024]
+rule extract_bam:
+    input: /mmfs1/home/kampman/scratch/projects/hla-fiberseq/data/fire-bams/CHM13.fire.bam, /mmfs1/home/kampman/scratch/projects/hla-fiberseq/data/mhc.500k.slop.bed
+    output: /mmfs1/home/kampman/scratch/projects/hla-fiberseq/snakemake-test/out-500k/CHM13.bam
+    jobid: 2
+    reason: Missing output files: /mmfs1/home/kampman/scratch/projects/hla-fiberseq/snakemake-test/out-500k/CHM13.bam
+    wildcards: working_dir=/mmfs1/home/kampman/scratch/projects/hla-fiberseq/snakemake-test/out-500k, sample=CHM13
+    resources: tmpdir=/tmp
+
+
+        samtools view -@ $(nproc) -b /mmfs1/home/kampman/scratch/projects/hla-fiberseq/data/fire-bams/CHM13.fire.bam -L /mmfs1/home/kampman/scratch/projects/hla-fiberseq/data/mhc.500k.slop.bed > /mmfs1/home/kampman/scratch/projects/hla-fiberseq/snakemake-test/out-500k/CHM13.bam
+        
+Activating conda environment: ../../../../../../home/kampman/miniconda3/envs/smk7

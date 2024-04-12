@@ -1,0 +1,4 @@
+Building DAG of jobs...
+WildcardError in rule extract_bam in file /mmfs1/gscratch/stergachislab/kampman/projects/hla-fiberseq/snakemake-test/Snakefile, line 7:
+Wildcards in input files cannot be determined from output files:
+'genome_region'

@@ -1,0 +1,21 @@
+configfile: "config.yaml"
+
+rule all:
+    input:
+        expand("{working_dir}/{sample}.bam.bai", working_dir=config["working_dir"], sample=config["samples"])
+
+rule convert_bam:
+    input:
+        "{working_dir}/{sample}.fire.bam"
+    output:
+        temp("{working_dir}/{sample}.bam")
+    shell:
+        "samtools view -@ $(nproc) -b {input} > {output}"
+
+rule index_bam:
+    input:
+        "{working_dir}/{sample}.bam"
+    output:
+        "{working_dir}/{sample}.bam.bai"
+    shell:
+        "samtools index {input}"

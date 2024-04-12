@@ -1,0 +1,4 @@
+Building DAG of jobs...
+WildcardError in rule compress_fasta in file /mmfs1/gscratch/stergachislab/kampman/projects/hla-fiberseq/snakemake-test/Snakefile, line 45:
+Wildcards in input files cannot be determined from output files:
+'working_dir'

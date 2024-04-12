@@ -1,0 +1,5 @@
+input_file_dir: "path/to/input/files"
+working_dir: "path/to/output/files"
+reference_genome: "path/to/reference/genome.fasta"
+samples:
+  - "sample1"

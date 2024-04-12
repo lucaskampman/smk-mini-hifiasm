@@ -1,0 +1,8 @@
+input_file_dir: "/mmfs1/home/kampman/scratch/projects/hla-fiberseq/data/fire-bams"
+working_dir: "/mmfs1/home/kampman/scratch/projects/hla-fiberseq/snakemake-test/work"
+output_dir: "/mmfs1/home/kampman/scratch/projects/hla-fiberseq/snakemake-test/out-500k"
+reference_genome: "path/to/reference/genome.fasta"
+genome_region: "/mmfs1/home/kampman/scratch/projects/hla-fiberseq/data/mhc.500k.slop.bed"
+samples:
+  - "CHM13"
+conda_env: "/mmfs1/home/kampman/miniconda3/envs/smk7"
