@@ -8,6 +8,8 @@ rule all:
     input:
         expand("results/denovo.haplotagged.{sample}_mhc.500k.bam", sample=config['samples'])
 
+# Filter reads from .fire.bam file to only those within selected region.
+# samtools view -@ `nproc` -b ../data/fire-bams/GM12878.fire.bam -ML ../data/mhc.500k.slop.bed > example.bam
 rule extract_bam:
     input:
         bam=lambda wildcards: config['input_file_dir'] + "/" + wildcards.sample + ".fire.bam",
@@ -21,6 +23,8 @@ rule extract_bam:
         samtools view -@ $(nproc) -b {input.bam} -L {input.bed} > {output.bam}
         """
 
+# Generate a compressed fasta file from the bam file.
+# samtools fasta example.bam | bgzip -@ `nproc` > example.fa.gz
 rule convert_to_fasta:
     input:
         bam="{working_dir}/{sample}.bam"
@@ -33,6 +37,9 @@ rule convert_to_fasta:
         samtools fasta {input.bam} | bgzip -@ $(nproc) > {output.fasta_gz}
         """
 
+# Run hifiasm on filtered reads.
+# mkdir -p results
+# hifiasm -o results/example -t `nproc` example.fa.gz
 rule run_hifiasm:
     input:
         fasta="{working_dir}/{sample}.fa"
@@ -58,6 +65,7 @@ rule run_hifiasm:
 #         bgzip -@ $(nproc) {input.fasta} > {output.fasta_gz}
 #         """
 
+# Index .fire.bam file, if needed.
 rule index_bam:
     input:
         "{input_file_dir}/{sample}.fire.bam"
@@ -68,20 +76,9 @@ rule index_bam:
     shell:
         "samtools index {input}"
 
-rule gfa_to_fasta:
-    input:
-        hap1="results/{sample}_mhc.500k.bp.hap1.p_ctg.gfa",
-        hap2="results/{sample}_mhc.500k.bp.hap2.p_ctg.gfa"
-    output:
-        fasta="results/denovo-{sample}_mhc.500k.fasta"
-    conda:
-        config['conda_env']
-    shell:
-        """
-        gfatools gfa2fa {input.hap1} > {output.fasta}
-        gfatools gfa2fa {input.hap2} >> {output.fasta}
-        """
 
+# map reads back to the denovo assembly
+# pbmm2 align --unmapped --sort -j `nproc` denovo-mhc.fasta example.bam denovo.example.bam 
 rule map_reads_to_assembly:
     input:
         fasta="results/denovo-{sample}_mhc.500k.fasta",
@@ -95,6 +92,9 @@ rule map_reads_to_assembly:
         pbmm2 align --unmapped --sort -j $(nproc) {input.fasta} {input.bam} {output.aligned_bam}
         """
 
+# Split reads that align with our region by haplotype, and add them to a fasta file.
+# gfatools gfa2fa results/example.bp.hap1.p_ctg.gfa  > denovo-mhc.fasta
+# gfatools gfa2fa results/example.bp.hap2.p_ctg.gfa >> denovo-mhc.fasta
 rule gfa_to_fasta:
     input:
         hap1="results/{sample}_mhc.500k.bp.hap1.p_ctg.gfa",
@@ -118,7 +118,7 @@ rule tag_reads_by_haplotype:
         config['conda_env']
     shell:
         """
-        haplotag-reads-by-asm.py --hap1-tag h1tg --hap2-tag h2tg {input.bam} {output.tagged_bam}
+        scripts/haplotag-reads-by-asm.py --hap1-tag h1tg --hap2-tag h2tg {input.bam} {output.tagged_bam}
         """
 
 
